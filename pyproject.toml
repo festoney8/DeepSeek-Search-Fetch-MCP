@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-deepseek-search-fetch-mcp = "deepseek_search_fetch_mcp:main"
+deepseek-search-fetch-mcp = "deepseek_search_fetch_mcp.main:main"
 
 [build-system]
 requires = ["uv_build>=0.13.5,<0.14.0"]

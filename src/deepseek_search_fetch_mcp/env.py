@@ -83,7 +83,7 @@ class EnvConfig(BaseModel):
     @classmethod
     def _validate_localization(cls, value: IPv4Address | None) -> IPv4Address | None:
         """校验公网 IPv4"""
-        if value is not None and not value.is_global:
+        if value is not None and (not value.is_global or value.is_multicast):
             raise ValueError("must be a global IPv4 address")
         return value
 

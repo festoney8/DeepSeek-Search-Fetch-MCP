@@ -1,7 +1,8 @@
+from ipaddress import IPv4Address, IPv6Address
 from typing import Annotated
 from urllib.parse import urlsplit
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, IPvAnyAddress, StringConstraints
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StringConstraints
 
 # 搜索文本约束
 _SearchText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=128)]
@@ -32,7 +33,7 @@ class SearchRequest(BaseModel):
     query: _SearchText
     count: int | None = Field(default=None, ge=1, le=50)
     ori_question: _SearchText | None = None
-    localization: IPvAnyAddress | None = None
+    localization: IPv4Address | IPv6Address | None = None
     need_content: bool | None = None
 
 

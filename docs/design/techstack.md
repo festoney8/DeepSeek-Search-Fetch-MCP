@@ -8,6 +8,8 @@
   - https://github.com/python-validators/validators
   - https://nandgator.github.io/pyvalidators/stable/
 - pydantic
+  - 管理类型
+  - 数据验证，进行合法性检测
 - 标准库
   - ipaddress
   - urllib.parse
