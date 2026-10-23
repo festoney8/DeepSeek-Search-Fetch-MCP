@@ -27,6 +27,7 @@
 ### 工具
 
 - 包管理：优先使用 uv 命令，不得直接编辑 `pyproject.toml` 文件
+- 代码运行：使用 uv run
 - 代码检测：以通过这三个命令为标准
   - 优先使用 `uvx ruff format .` 格式化 python 代码
   - 优先使用 `uvx ruff check --fix .` 检查并自动修复部分代码问题，再编辑修复其他问题
