@@ -25,8 +25,19 @@ mcp = FastMCP(
     name="DeepSeek Search & Fetch",
     version="0.1.0",
     instructions=(
-        "Use ds_web_search to search the web and ds_web_fetch to retrieve a public HTTP or HTTPS URL. "
-        "Server-configured search options are applied automatically."
+        """This MCP server provides DeepSeek-powered web search and fetch through two MCP tools: `ds_web_search` and `ds_web_fetch`.
+
+## ds_web_search
+Use `ds_web_search` to discover current web information and return ranked, structured results. It is recommended when you need to find sources for a question, search the document, compare coverage across the web, or restrict results to specific sites or publication dates.
+
+## ds_web_fetch
+Use `ds_web_fetch` to get the agent-friendly Markdown content of a specific webpage. It is recommended when you already have a URL and need to read, summarize, quote, or extract information from that page. Only public HTTP or HTTPS URLs are supported.
+If the URL suffix indicates that the content is agent-friendly, such as formats like JSON, XML, CSV, YAML, YML, MD, TXT, or programming language extensions, you can access the content directly by visiting the URL instead of use ds_web_fetch.
+If the URL suffix indicates that the content is binary, such as an image, audio, video, or binary file, do not use ds_web_fetch to retrieve the information.
+
+## Combined usage
+A common workflow when investigate and survey is to use `ds_web_search` to find relevant pages, then `ds_web_fetch` to inspect a selected result in detail.
+"""
     ),
     lifespan=app_lifespan,
     mask_error_details=True,
@@ -43,7 +54,7 @@ async def ds_web_fetch(
     url: Annotated[
         str,
         StringConstraints(strip_whitespace=True, min_length=1, max_length=8192),
-        Field(description="Public HTTP or HTTPS URL to fetch"),
+        Field(description=("(Required) HTTP or HTTPS URL to fetch, up to 8192 characters.")),
     ],
     ctx: Context = CurrentContext(),  # noqa: B008
 ) -> FetchResponse:
@@ -74,20 +85,41 @@ async def ds_web_search(
     query: Annotated[
         str,
         StringConstraints(strip_whitespace=True, min_length=1, max_length=128),
-        Field(description="Search query, including any exact phrases enclosed in double quotes"),
+        Field(
+            description=(
+                "(Required) Search query, up to 128 Unicode characters. "
+                "To perform an exact match on certain words in this query, wrap it in double quotes. "
+                "This is useful for searching for proper nouns or ensuring that search results must contain a specific word."
+            )
+        ),
     ],
     ori_question: Annotated[
-        str,
+        str | None,
         StringConstraints(strip_whitespace=True, max_length=128),
-        Field(description="Original user question that triggered the search"),
-    ]
-    | None = None,
+        Field(
+            description=(
+                "(Optional) Original user question that triggered the search, up to 128 Unicode characters. "
+                "Providing it can improve query understanding; omit it when unavailable."
+            )
+        ),
+    ] = None,
     sites: Annotated[
         list[str] | None,
-        Field(description="Optional list of bare domains used to restrict the search"),
+        Field(
+            description=(
+                "(Optional) Restrict results to the given sites, for example ['github.com', 'huggingface.co']. "
+                "Domains only, do not include schemes, paths or wildcards."
+            )
+        ),
     ] = None,
-    after: Annotated[date | None, Field(description="Only include results on or after this date")] = None,
-    before: Annotated[date | None, Field(description="Only include results on or before this date")] = None,
+    after: Annotated[
+        date | None,
+        Field(description=("(Optional) YYYY-MM-DD date to restrict results published after this date.")),
+    ] = None,
+    before: Annotated[
+        date | None,
+        Field(description=("(Optional) YYYY-MM-DD date to restrict results published before this date.")),
+    ] = None,
     ctx: Context = CurrentContext(),  # noqa: B008
 ) -> SearchResponse:
     """Search the web through the DeepSeek Search API."""
