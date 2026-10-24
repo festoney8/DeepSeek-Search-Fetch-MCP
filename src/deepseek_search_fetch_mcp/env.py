@@ -2,9 +2,9 @@ import os
 import re
 from ipaddress import IPv4Address
 
-from iso639 import is_language
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, ValidationError, field_validator
-from validators import domain
+
+from deepseek_search_fetch_mcp.utils import normalize_domains, normalize_languages
 
 # 支持的环境变量名
 _ENV_NAMES = (
@@ -105,13 +105,7 @@ class EnvConfig(BaseModel):
     @classmethod
     def _parse_languages(cls, value: object) -> tuple[str, ...]:
         """解析并校验 ISO 639-1 语言码"""
-        languages: list[str] = []
-        for code in _split_items(value, ","):
-            code = code.lower()
-            if not is_language(code, "pt1"):
-                raise ValueError("must contain valid ISO 639-1 language codes")
-            languages.append(code)
-        return tuple(dict.fromkeys(languages))
+        return normalize_languages(_split_items(value, ","))
 
     @field_validator("search_exclude_words", mode="before")
     @classmethod
@@ -126,10 +120,7 @@ class EnvConfig(BaseModel):
     @classmethod
     def _parse_exclude_sites(cls, value: object) -> tuple[str, ...]:
         """解析并校验排除域名"""
-        sites = _split_items(value, "|")
-        if any(not domain(site) for site in sites):
-            raise ValueError("must contain valid bare domains")
-        return tuple(dict.fromkeys(sites))
+        return normalize_domains(_split_items(value, "|"))
 
 
 def load_env() -> EnvConfig:

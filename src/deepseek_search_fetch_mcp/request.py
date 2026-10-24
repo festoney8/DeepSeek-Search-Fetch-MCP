@@ -4,11 +4,11 @@ from ipaddress import IPv6Address, ip_address
 from urllib.parse import urlsplit
 
 from pydantic import ValidationError
-from validators import domain
 from validators import url as validate_url
 
 from deepseek_search_fetch_mcp.api import FetchRequest, SearchRequest
 from deepseek_search_fetch_mcp.env import EnvConfig
+from deepseek_search_fetch_mcp.utils import normalize_domains, normalize_languages
 
 
 def build_fetch_request(url: str) -> FetchRequest:
@@ -48,7 +48,9 @@ def build_search_request(
     env: EnvConfig,
     query: str,
     ori_question: str | None = None,
+    count: int | None = None,
     sites: Sequence[str] | None = None,
+    lang: Sequence[str] | None = None,
     after: date | None = None,
     before: date | None = None,
 ) -> SearchRequest:
@@ -59,9 +61,10 @@ def build_search_request(
 
     parts = [base_query]
     if sites:
-        site_values = tuple(dict.fromkeys(site.strip() for site in sites if site.strip()))
-        if any(not domain(site) for site in site_values):
-            raise ValueError("sites must contain valid bare domains")
+        try:
+            site_values = normalize_domains(sites)
+        except ValueError:
+            raise ValueError("sites must contain valid bare domains") from None
         if site_values:
             parts.append(" OR ".join(f"site:{site}" for site in site_values))
 
@@ -73,8 +76,9 @@ def build_search_request(
     if before is not None:
         parts.append(f"before:{before.isoformat()}")
 
-    if env.search_lang:
-        parts.append(f"lang:{','.join(env.search_lang)}")
+    languages = env.search_lang if lang is None else normalize_languages(lang)
+    if languages:
+        parts.append(f"lang:{','.join(languages)}")
 
     parts.extend(f'-"{word}"' for word in env.search_exclude_words)
     parts.extend(f"-site:{site}" for site in env.search_exclude_sites)
@@ -82,9 +86,10 @@ def build_search_request(
     final_query = " ".join(parts)
 
     normalized_question = ori_question.strip() if ori_question is not None else None
+    effective_count = env.search_count if count is None else count
     return SearchRequest(
         query=final_query,
-        count=env.search_count,
+        count=effective_count,
         ori_question=normalized_question or None,
         localization=env.search_localization,
         need_content=env.search_need_content,

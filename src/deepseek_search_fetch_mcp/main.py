@@ -29,6 +29,7 @@ mcp = FastMCP(
 
 ## ds_web_search
 Use `ds_web_search` to discover current web information and return ranked, structured results. It is recommended when you need to find sources for a question, search the document, compare coverage across the web, or restrict results to specific sites or publication dates.
+Use the `count` and `lang` parameters to override server-configured search defaults for a single call. Passing `lang: []` clears the configured language restriction for that call.
 
 ## ds_web_fetch
 Use `ds_web_fetch` to get the agent-friendly Markdown content of a specific webpage. It is recommended when you already have a URL and need to read, summarize, quote, or extract information from that page. Only public HTTP or HTTPS URLs are supported.
@@ -103,12 +104,34 @@ async def ds_web_search(
             )
         ),
     ] = None,
+    count: Annotated[
+        int | None,
+        Field(
+            ge=1,
+            le=50,
+            description=(
+                "(Optional) Number of search results to request, from 1 to 50. "
+                "If omitted, the server configured default count is used. "
+            ),
+        ),
+    ] = None,
     sites: Annotated[
         list[str] | None,
         Field(
             description=(
                 "(Optional) Restrict results to the given sites, for example ['github.com', 'huggingface.co']. "
                 "Domains only, do not include schemes, paths or wildcards."
+            )
+        ),
+    ] = None,
+    lang: Annotated[
+        list[str] | None,
+        Field(
+            description=(
+                "(Optional) Restrict results to the given language. "
+                "ISO-639-1 format, for example ['zh', 'en']. "
+                "Passing an empty list means no language restriction."
+                "If omitted, the server configured default language is used. "
             )
         ),
     ] = None,
@@ -130,7 +153,9 @@ async def ds_web_search(
             env=env,
             query=query,
             ori_question=ori_question,
+            count=count,
             sites=sites,
+            lang=lang,
             after=after,
             before=before,
         )
