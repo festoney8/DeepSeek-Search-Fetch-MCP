@@ -1,8 +1,8 @@
 # DeepSeek Search Fetch MCP
 
-[English](README.md) | **简体中文**
+[English](https://github.com/festoney8/DeepSeek-Search-Fetch-MCP/blob/main/README.md) | **简体中文**
 
-将 DeepSeek Search 和 DeepSeek Fetch 封装为两个 MCP Tool 的服务器。AI 客户端可以检索最新网络信息，按站点、语言和日期筛选结果，再获取指定页面的智能体友好内容，无需离开 MCP 工作流。
+将 DeepSeek Search API 和 DeepSeek Fetch API 封装为两个 MCP Tool。AI agent 可以检索最新网络信息，按站点、语言和日期筛选结果，再以 Markdown 格式获取指定网站的内容，无需离开 MCP 工作流。
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyPI](https://img.shields.io/badge/PyPI-deepseek--search--fetch--mcp-3775A9?logo=pypi&logoColor=white)](https://pypi.org/project/deepseek-search-fetch-mcp/)

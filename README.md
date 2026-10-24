@@ -1,8 +1,8 @@
 # DeepSeek Search Fetch MCP
 
-**English** | [简体中文](README_zh.md)
+**English** | [简体中文](https://github.com/festoney8/DeepSeek-Search-Fetch-MCP/blob/main/README_zh.md)
 
-An MCP server that exposes DeepSeek Search and Fetch as two tools for AI clients. Search the web, narrow results by site, language, and date, then fetch a page as agent-friendly content without leaving the MCP workflow.
+An MCP server that exposes DeepSeek Search API and Fetch API as two tools for AI agents. AI agents can fetch the latest information from the web, filter results by site, language, and date, and then get content from specified websites in Markdown format, all without leaving the MCP workflow.
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyPI](https://img.shields.io/badge/PyPI-deepseek--search--fetch--mcp-3775A9?logo=pypi&logoColor=white)](https://pypi.org/project/deepseek-search-fetch-mcp/)
