@@ -85,9 +85,7 @@ Use it to find sources, conduct research, discover documents, compare informatio
 Use `ds_web_fetch` to fetch the page content as agent-friendly Markdown of a specific webpage. It is recommended when you already have a URL and need to read, summarize, quote, or extract information from that page. Only public HTTP or HTTPS URLs are supported.
 If the URL suffix indicates that the content is agent-friendly, such as formats like JSON, XML, CSV, YAML, YML, MD, TXT, or programming language extensions, you can access the content directly by visiting the URL instead of using ds_web_fetch.
 If the URL suffix indicates that the content is binary, such as an image, audio, video, or binary file, do not use ds_web_fetch to fetch the information.
-
-## Combined usage
-A common workflow when investigate and survey is to use `ds_web_search` to find relevant pages, then `ds_web_fetch` to inspect a selected result in detail.
+If ds_web_fetch fails to retrieve the webpage, use another web fetching mcp tool or even command line tools.
 
 ## Recommendation
 For tasks that require many searches, delegate the research to a subagent to avoid consuming too much LLM context.

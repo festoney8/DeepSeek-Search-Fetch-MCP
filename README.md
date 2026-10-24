@@ -73,6 +73,14 @@ This template includes every supported environment variable. Optional values can
 
 There is no need to use this MCP; DSH provides the built-in [@deepseek-ai/dsh-web-search-deepseek](https://github.com/deepseek-ai/deepseek-harness/tree/master/packages/web/web-search-deepseek) plugin.
 
+If you are using a third-party model, you need to add
+
+```
+DEEPSEEK_API_KEY=sk-********************
+```
+
+to the `refs` field in the `$DSH_HOME/.credentials.yaml` file and then restart DSH; this will enable the third-party model to use dsh-web-search-deepseek.
+
 ### ChatGPT Desktop (Codex)
 
 ![](images/codex01.png)

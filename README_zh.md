@@ -71,7 +71,15 @@
 
 ### DeepSeek Harness (DSH)
 
-无需使用本 mcp，DSH 已经内置了 [@deepseek-ai/dsh-web-search-deepseek](https://github.com/deepseek-ai/deepseek-harness/tree/master/packages/web/web-search-deepseek) 插件
+无需使用本 mcp，DSH 已经内置了 [@deepseek-ai/dsh-web-search-deepseek](https://github.com/deepseek-ai/deepseek-harness/tree/master/packages/web/web-search-deepseek) 插件。
+
+如果你使用第三方模型，需在 `$DSH_HOME/.credentials.yaml` 文件的 `refs` 字段内新增
+
+```
+DEEPSEEK_API_KEY=sk-********************
+```
+
+并重启 DSH，即可让第三方模型也能用 dsh-web-search-deepseek
 
 ### ChatGPT Desktop (Codex)
 
