@@ -1,6 +1,6 @@
 [project]
 name = "deepseek-search-fetch-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCPs for DeepSeek Search API and Fetch API."
 readme = "README.md"
 authors = [{ name = "festoney8", email = "festoney8@gmail.com" }]

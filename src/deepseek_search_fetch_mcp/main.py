@@ -1,5 +1,6 @@
 from collections.abc import AsyncIterator
 from datetime import date
+from importlib.metadata import version as get_version
 from typing import Annotated, Any
 
 from fastmcp import Context, FastMCP
@@ -23,7 +24,7 @@ async def app_lifespan(_: FastMCP) -> AsyncIterator[dict[str, Any]]:
 
 mcp = FastMCP(
     name="DeepSeek Search and Fetch",
-    version="0.1.0",
+    version=get_version("deepseek-search-fetch-mcp"),
     instructions=(
         """This MCP server provides DeepSeek-powered web search and fetch through two MCP tools: `ds_web_search` and `ds_web_fetch`.
 
@@ -93,7 +94,7 @@ async def ds_web_search(
             description=(
                 "(Required) Search query, up to 100 Unicode characters. "
                 "To perform an exact match on certain words in this query, wrap it in double quotes. "
-                "This is useful for searching for proper nouns or ensuring that search results must contain a specific word."
+                "This is useful for searching for proper nouns or ensuring that search results must contain specific word."
             )
         ),
     ],
@@ -114,7 +115,7 @@ async def ds_web_search(
             le=50,
             description=(
                 "(Optional) Number of search results to request, from 1 to 50. "
-                "If omitted, the server configured default count is used. "
+                "If omitted, the user configured default count is used. "
             ),
         ),
     ] = None,
@@ -123,7 +124,8 @@ async def ds_web_search(
         Field(
             description=(
                 "(Optional) Restrict results to the given sites, for example ['github.com', 'huggingface.co']. "
-                "Domains only, do not include schemes, paths or wildcards."
+                "Domains only, do not include schemes, paths or wildcards. "
+                "Not recommended to specify more than 3 sites."
             )
         ),
     ] = None,
@@ -132,9 +134,9 @@ async def ds_web_search(
         Field(
             description=(
                 "(Optional) Restrict results to the given language. "
-                "ISO-639-1 format, for example ['zh', 'en']. "
-                "Passing an empty list means no language restriction."
-                "If omitted, the server configured default language is used. "
+                "ISO-639-1 format, for example ['en'] or ['zh', 'en'] or ['ru', 'ja']. "
+                "Passing an empty list means no language restriction. "
+                "If omitted, the user configured default language is used."
             )
         ),
     ] = None,
