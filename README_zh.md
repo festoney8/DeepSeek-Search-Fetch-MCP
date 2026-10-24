@@ -20,6 +20,9 @@
 > [!IMPORTANT]
 > API Key 仅应保存在 MCP 客户端的环境配置中，请勿提交包含真实密钥的配置文件。
 
+> [!NOTE]
+> DeepSeek Search 和 Fetch 服务每 1,000 次成功请求计费 5 元。参考 [文档](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/#%E7%BD%91%E9%A1%B5%E6%90%9C%E7%B4%A2%E4%B8%8E%E6%8A%93%E5%8F%96%E4%BB%B7%E6%A0%BC)
+
 ### 环境要求
 
 - 需安装 [uv](https://docs.astral.sh/uv/getting-started/installation/)

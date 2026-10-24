@@ -20,6 +20,9 @@ An MCP server that exposes DeepSeek Search API and Fetch API as two tools for AI
 > [!IMPORTANT]
 > Keep the API key in the MCP client's environment configuration. Do not commit a configuration file containing a real key.
 
+> [!NOTE]
+> DeepSeek Search and Fetch billed $0.75 per 1,000 successful requests. See [DOC](https://api-docs.deepseek.com/quick_start/pricing/#search--fetch-pricing)
+
 ### Prerequisites
 
 - Need to install [uv](https://docs.astral.sh/uv/getting-started/installation/)
@@ -79,7 +82,7 @@ If you are using a third-party model, you need to add
 DEEPSEEK_API_KEY=sk-********************
 ```
 
-to the `refs` field in the `$DSH_HOME/.credentials.yaml` file and then restart DSH; this will enable the third-party model to use dsh-web-search-deepseek.
+to the `refs` field in file `$DSH_HOME/.credentials.yaml` and then restart DSH; this will allow the third-party model to use dsh-web-search-deepseek.
 
 ### ChatGPT Desktop (Codex)
 
