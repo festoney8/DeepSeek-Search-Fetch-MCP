@@ -9,7 +9,7 @@ from fastmcp import Client
 from fastmcp.exceptions import ToolError
 
 from deepseek_search_fetch_mcp.api import DeepSeekAPI, DeepSeekAPIError, FetchRequest, FetchResponse
-from deepseek_search_fetch_mcp.main import mcp
+from deepseek_search_fetch_mcp.main import FetchToolResponse, mcp
 from deepseek_search_fetch_mcp.request import build_fetch_request
 
 pytestmark = pytest.mark.anyio
@@ -213,7 +213,7 @@ async def test_fetch_tool_live_success() -> None:
 
     assert result.is_error is False
     assert result.structured_content is not None
-    response = FetchResponse.model_validate(result.structured_content)
+    response = FetchToolResponse.model_validate(result.structured_content)
     assert response.title
     assert response.content
 

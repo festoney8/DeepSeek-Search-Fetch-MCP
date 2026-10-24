@@ -11,7 +11,7 @@ from pydantic import ValidationError
 
 from deepseek_search_fetch_mcp.api import DeepSeekAPI, DeepSeekAPIError, SearchRequest, SearchResponse
 from deepseek_search_fetch_mcp.env import EnvConfig, EnvConfigError, load_env
-from deepseek_search_fetch_mcp.main import mcp
+from deepseek_search_fetch_mcp.main import SearchToolResponse, mcp
 from deepseek_search_fetch_mcp.request import build_search_request
 
 pytestmark = pytest.mark.anyio
@@ -273,8 +273,12 @@ async def test_search_tool_live_success() -> None:
 
     assert result.is_error is False
     assert result.structured_content is not None
-    response = SearchResponse.model_validate(result.structured_content)
+    response = SearchToolResponse.model_validate(result.structured_content)
     assert isinstance(response.results, list)
+    assert response.results
+    first_result = response.results[0].model_dump()
+    assert "snippet" not in first_result
+    assert "site_icon" not in first_result
 
 
 @pytest.mark.parametrize(

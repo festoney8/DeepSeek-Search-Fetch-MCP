@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from datetime import date
 from importlib.metadata import version as get_version
@@ -9,9 +10,11 @@ from fastmcp.exceptions import ToolError
 from fastmcp.server.lifespan import lifespan
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
-from deepseek_search_fetch_mcp.api import DeepSeekAPI, DeepSeekAPIError, FetchResponse
-from deepseek_search_fetch_mcp.env import EnvConfig, load_env
+from deepseek_search_fetch_mcp.api import DeepSeekAPI, DeepSeekAPIError
+from deepseek_search_fetch_mcp.env import EnvConfig, EnvConfigError, load_env
 from deepseek_search_fetch_mcp.request import build_fetch_request, build_search_request
+
+logger = logging.getLogger(__name__)
 
 
 class SearchToolResult(BaseModel):
@@ -19,14 +22,27 @@ class SearchToolResult(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    rerank_score: float = Field(ge=0, le=3)
-    title: str
-    url: str
-    summary: str
-    content: str
-    site_name: str | None
-    date: str | None
-    authority: int = Field(ge=-1, le=4)
+    rerank_score: float = Field(
+        ge=0,
+        le=3,
+        description=(
+            "Relevance score from 0 to 3 that combines relevance, authority, and freshness. "
+            "score >= 1.5 are considered high quality results."
+        ),
+    )
+    title: str = Field(description="The title of the webpage.")
+    url: str = Field(description="The URL of the webpage.")
+    summary: str = Field(description=("The long summary of the webpage content."))
+    content: str = Field(description="Full page content. Empty when content collection is disabled.")
+    site_name: str | None = Field(description="The name of the site, or null when unavailable.")
+    date: str | None = Field(description="Pubdate, null when unknown.")
+    authority: int = Field(
+        ge=-1,
+        le=4,
+        description=(
+            "Authority tier from 0 to 4. -1 means unknown. Values of 3 or above indicate highly authoritative sources."
+        ),
+    )
 
 
 class SearchToolResponse(BaseModel):
@@ -34,7 +50,16 @@ class SearchToolResponse(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    results: list[SearchToolResult]
+    results: list[SearchToolResult] = Field(description="A ranked list of search results.")
+
+
+class FetchToolResponse(BaseModel):
+    """MCP Fetch 成功响应"""
+
+    model_config = ConfigDict(extra="allow")
+
+    title: str = Field(description="The page title. Empty when the title is unavailable.")
+    content: str = Field(description="The fetched page content as Markdown text.")
 
 
 @lifespan
@@ -85,7 +110,7 @@ async def ds_web_fetch(
         Field(description=("(Required) HTTP or HTTPS URL to fetch, up to 8192 characters.")),
     ],
     ctx: Context = CurrentContext(),  # noqa: B008
-) -> FetchResponse:
+) -> FetchToolResponse:
     """Fetch a public HTTP or HTTPS URL through the DeepSeek Fetch API."""
     api: DeepSeekAPI = ctx.lifespan_context["api"]
     try:
@@ -94,7 +119,7 @@ async def ds_web_fetch(
         raise ToolError(str(exc)) from exc
 
     try:
-        return await api.fetch(request)
+        response = await api.fetch(request)
     except DeepSeekAPIError as exc:
         details = ", ".join(
             f"{name}={value}"
@@ -102,6 +127,8 @@ async def ds_web_fetch(
             if value is not None
         )
         raise ToolError(f"{exc} [{details}]" if details else str(exc)) from exc
+
+    return FetchToolResponse.model_validate(response.model_dump())
 
 
 @mcp.tool(
@@ -207,7 +234,11 @@ async def ds_web_search(
 
 def main() -> None:
     """启动 FastMCP 服务"""
-    mcp.run()
+    try:
+        mcp.run()
+    except EnvConfigError as exc:
+        logger.error("%s", exc)
+        raise SystemExit(1) from None
 
 
 if __name__ == "__main__":
