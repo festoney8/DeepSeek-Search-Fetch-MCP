@@ -19,10 +19,9 @@ An MCP server that exposes DeepSeek Search and Fetch as two tools for AI clients
 
 ### Prerequisites
 
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Python 3.11 or later
-- [uv](https://docs.astral.sh/uv/)
 - A DeepSeek API key
-- An MCP-compatible client
 
 ### Run the server
 
@@ -34,7 +33,7 @@ The server communicates over stdio. In normal use, your MCP client starts it wit
 
 ## MCP Client Configuration
 
-[uv](https://docs.astral.sh/uv/getting-started/installation/) is required.
+Require the uvx command in uv.
 
 Add one of the following templates to the `mcpServers` section of your MCP client configuration. Replace the placeholder API key before use.
 

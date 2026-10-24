@@ -19,8 +19,8 @@
 
 ### 环境要求
 
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Python 3.11 或更高版本
-- [uv](https://docs.astral.sh/uv/)
 - DeepSeek API Key
 - 兼容 MCP 的客户端
 
@@ -34,7 +34,7 @@ DEEPSEEK_API_KEY="sk-**********" uvx deepseek-search-fetch-mcp
 
 ## MCP 客户端配置
 
-需要使用 [uv](https://docs.astral.sh/uv/getting-started/installation/)。
+需要使用 uv 的 uvx 命令。
 
 将以下任一模板加入 MCP 客户端配置的 `mcpServers` 字段，并在使用前替换占位 API Key。
 
