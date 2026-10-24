@@ -28,13 +28,13 @@ mcp = FastMCP(
         """This MCP server provides DeepSeek-powered web search and fetch through two MCP tools: `ds_web_search` and `ds_web_fetch`.
 
 ## ds_web_search
-Use `ds_web_search` to discover current web information and return ranked, structured results. It is recommended when you need to find sources for a question, search the document, compare coverage across the web, or restrict results to specific sites or publication dates.
-Use the `count` and `lang` parameters to override server-configured search defaults for a single call. Passing `lang: []` clears the configured language restriction for that call.
+Use `ds_web_search` to discover current web information and return ranked, structured results.
+It is recommended when you need to find sources for a question, do research, search for documents, compare coverage across the web, or restrict results to specific sites or publication dates.
 
 ## ds_web_fetch
 Use `ds_web_fetch` to get the agent-friendly Markdown content of a specific webpage. It is recommended when you already have a URL and need to read, summarize, quote, or extract information from that page. Only public HTTP or HTTPS URLs are supported.
 If the URL suffix indicates that the content is agent-friendly, such as formats like JSON, XML, CSV, YAML, YML, MD, TXT, or programming language extensions, you can access the content directly by visiting the URL instead of use ds_web_fetch.
-If the URL suffix indicates that the content is binary, such as an image, audio, video, or binary file, do not use ds_web_fetch to retrieve the information.
+If the URL suffix indicates that the content is binary, such as an image, audio, video, or binary file, do not use ds_web_fetch to fetch the information.
 
 ## Combined usage
 A common workflow when investigate and survey is to use `ds_web_search` to find relevant pages, then `ds_web_fetch` to inspect a selected result in detail.
@@ -85,10 +85,10 @@ async def ds_web_fetch(
 async def ds_web_search(
     query: Annotated[
         str,
-        StringConstraints(strip_whitespace=True, min_length=1, max_length=128),
+        StringConstraints(strip_whitespace=True, min_length=1, max_length=100),
         Field(
             description=(
-                "(Required) Search query, up to 128 Unicode characters. "
+                "(Required) Search query, up to 100 Unicode characters. "
                 "To perform an exact match on certain words in this query, wrap it in double quotes. "
                 "This is useful for searching for proper nouns or ensuring that search results must contain a specific word."
             )
