@@ -205,6 +205,7 @@ src/deepseek_search_fetch_mcp/
 └── api/
     ├── api.py     # DeepSeek HTTP 客户端
     └── models.py  # 请求与响应模型
+scripts/           # 测试脚本
 ```
 
 ## 技术栈
@@ -218,6 +219,7 @@ src/deepseek_search_fetch_mcp/
 ## 文档
 
 - [设计文档](docs/design/)
+- [测试方法](/scripts/README.md)
 - [DeepSeek 网页搜索与抓取](https://api-docs.deepseek.com/guides/search)
 - [DeepSeek Search API](https://api-docs.deepseek.com/api/search/)
 - [DeepSeek Fetch API](https://api-docs.deepseek.com/api/fetch/)

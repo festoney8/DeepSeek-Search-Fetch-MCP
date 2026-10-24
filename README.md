@@ -205,6 +205,7 @@ src/deepseek_search_fetch_mcp/
 └── api/
     ├── api.py     # DeepSeek HTTP client
     └── models.py  # Request and response models
+scripts/           # Testing scripts
 ```
 
 ## Tech Stack
@@ -218,6 +219,7 @@ src/deepseek_search_fetch_mcp/
 ## Documentation
 
 - [Design](docs/design/)
+- [Testing](/scripts/README.md)
 - [DeepSeek Search & Fetch](https://api-docs.deepseek.com/guides/search)
 - [DeepSeek Search API](https://api-docs.deepseek.com/api/search/)
 - [DeepSeek Fetch API](https://api-docs.deepseek.com/api/fetch/)
