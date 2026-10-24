@@ -22,7 +22,7 @@ async def app_lifespan(_: FastMCP) -> AsyncIterator[dict[str, Any]]:
 
 
 mcp = FastMCP(
-    name="DeepSeek Search & Fetch",
+    name="DeepSeek Search and Fetch",
     version="0.1.0",
     instructions=(
         """This MCP server provides DeepSeek-powered web search and fetch through two MCP tools: `ds_web_search` and `ds_web_fetch`.
@@ -38,6 +38,9 @@ If the URL suffix indicates that the content is binary, such as an image, audio,
 
 ## Combined usage
 A common workflow when investigate and survey is to use `ds_web_search` to find relevant pages, then `ds_web_fetch` to inspect a selected result in detail.
+
+## Recommendation
+If need to perform large number of ds_web_search or combined use, using this MCP in a subagent to avoid consuming too much LLM context.
 """
     ),
     lifespan=app_lifespan,

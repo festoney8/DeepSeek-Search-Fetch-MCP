@@ -13,7 +13,7 @@
 ## 环境变量
 
 - `DEEPSEEK_API_KEY` 必填，非空，满足正则 `^sk-[a-zA-Z0-9]+$`
-- `DEEPSEEK_API_TIMEOUT` 可选，不填默认 15，单位秒，无重试
+- `DEEPSEEK_API_TIMEOUT` 可选，不填默认 30，单位秒，无重试
 
 ## ds_web_fetch
 

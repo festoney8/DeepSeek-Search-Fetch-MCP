@@ -45,7 +45,7 @@ class EnvConfig(BaseModel):
     # API 配置
     api_key: SecretStr = Field(validation_alias="DEEPSEEK_API_KEY")
     api_timeout: float = Field(
-        default=15,
+        default=30,
         gt=0,
         allow_inf_nan=False,
         validation_alias="DEEPSEEK_API_TIMEOUT",

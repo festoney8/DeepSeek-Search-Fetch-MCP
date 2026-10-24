@@ -39,7 +39,7 @@ class DeepSeekAPIError(Exception):
 class DeepSeekAPI:
     """DeepSeek Search/Fetch API 客户端"""
 
-    def __init__(self, api_key: str, timeout: float = 15) -> None:
+    def __init__(self, api_key: str, timeout: float = 30) -> None:
         """初始化客户端"""
         self._api_key = api_key
         self._timeout = timeout
