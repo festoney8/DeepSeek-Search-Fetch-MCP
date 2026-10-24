@@ -90,11 +90,11 @@ This template includes every supported environment variable. Optional values can
 | `DEEPSEEK_API_KEY`              | Yes      | -       | DeepSeek API key. It must match `^sk-[a-zA-Z0-9]+$`                                                                                      |
 | `DEEPSEEK_API_TIMEOUT`          | No       | `30`    | Request timeout in seconds. Must be greater than 0. Requests are not retried                                                             |
 | `DEEPSEEK_SEARCH_COUNT`         | No       | `10`    | Default result count for `ds_web_search`, from 1 to 50. The tool parameter takes precedence                                              |
-| `DEEPSEEK_SEARCH_LOCALIZATION`  | No       | -       | Globally routable unicast IPv4 address passed to the Search API for result localization                                                  |
-| `DEEPSEEK_SEARCH_NEED_CONTENT`  | No       | -       | Whether the Search API should include page content in results. Accepts `true`, `1`, `false`, or `0`, case-insensitively                  |
+| `DEEPSEEK_SEARCH_LOCALIZATION`  | No       | -       | Globally routable unicast IPv4 address passed to the Search API for result localization. Usually unnecessary                            |
+| `DEEPSEEK_SEARCH_NEED_CONTENT`  | No       | -       | Whether the Search API should include page content in results. Accepts `true`, `1`, `false`, or `0`, case-insensitively. Not recommended because it can consume substantial context |
 | `DEEPSEEK_SEARCH_LANG`          | No       | -       | Default language restriction as comma-separated ISO 639-1 codes, such as `zh,en`. The `lang` tool parameter takes precedence             |
-| `DEEPSEEK_SEARCH_EXCLUDE_WORDS` | No       | -       | Global word blacklist separated by `\|`. Each word is added as an excluded phrase and cannot contain double quotes or control characters |
-| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | No       | -       | Global domain blacklist separated by `\|`. Each entry must be a valid bare domain and is added as an excluded site                       |
+| `DEEPSEEK_SEARCH_EXCLUDE_WORDS` | No       | -       | Global word blacklist separated by `\|`. Each word is added as an excluded phrase and cannot contain double quotes or control characters. Not commonly used; use no more than 3 words because they consume the 128-character query limit |
+| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | No       | -       | Global domain blacklist separated by `\|`. Each entry must be a valid bare domain and is added as an excluded site. Use no more than 3 sites because they consume the 128-character query limit |
 
 Empty optional variables are ignored. A non-empty value is validated when the server starts, and invalid configuration causes the server to exit instead of accepting requests.
 

@@ -91,11 +91,11 @@ DEEPSEEK_API_KEY="sk-**********" uvx deepseek-search-fetch-mcp
 | `DEEPSEEK_API_KEY`              | 是   | -      | DeepSeek API Key，必须匹配 `^sk-[a-zA-Z0-9]+$`                                        |
 | `DEEPSEEK_API_TIMEOUT`          | 否   | `30`   | 请求超时秒数，必须大于 0，不会自动重试                                                |
 | `DEEPSEEK_SEARCH_COUNT`         | 否   | `10`   | `ds_web_search` 默认结果数量，范围 1 到 50。工具参数优先                              |
-| `DEEPSEEK_SEARCH_LOCALIZATION`  | 否   | -      | 传递给 Search API 的公网单播 IPv4 地址，用于结果本地化                                |
-| `DEEPSEEK_SEARCH_NEED_CONTENT`  | 否   | -      | Search API 是否在搜索结果中包含页面内容。支持 `true`、`1`、`false`、`0`，不区分大小写 |
+| `DEEPSEEK_SEARCH_LOCALIZATION`  | 否   | -      | 传递给 Search API 的公网单播 IPv4 地址，用于结果本地化。通常不需要设置                |
+| `DEEPSEEK_SEARCH_NEED_CONTENT`  | 否   | -      | Search API 是否在搜索结果中包含页面内容。支持 `true`、`1`、`false`、`0`，不区分大小写。不推荐开启，会占用大量上下文 |
 | `DEEPSEEK_SEARCH_LANG`          | 否   | -      | 默认语言限制，使用逗号分隔的 ISO 639-1 语言码，例如 `zh,en`。`lang` 工具参数优先      |
-| `DEEPSEEK_SEARCH_EXCLUDE_WORDS` | 否   | -      | 全局排除词，使用 `\|` 分隔。每个词会作为排除短语加入搜索，且不得包含双引号或控制字符  |
-| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | 否   | -      | 全局排除站点，使用 `\|` 分隔。每项必须是合法裸域名，并会作为排除站点加入搜索          |
+| `DEEPSEEK_SEARCH_EXCLUDE_WORDS` | 否   | -      | 全局排除词，使用 `\|` 分隔。每个词会作为排除短语加入搜索，且不得包含双引号或控制字符。不常用，建议不超过 3 个；排除词会占用 query 的 128 字符长度限制 |
+| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | 否   | -      | 全局排除站点，使用 `\|` 分隔。每项必须是合法裸域名，并会作为排除站点加入搜索。建议不超过 3 个；排除站点会占用 query 的 128 字符长度限制 |
 
 可选环境变量为空时会被忽略。非空值会在服务启动时校验，配置非法时服务直接退出，不接收请求。
 
