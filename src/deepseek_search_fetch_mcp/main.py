@@ -27,20 +27,21 @@ class SearchToolResult(BaseModel):
         le=3,
         description=(
             "Relevance score from 0 to 3 that combines relevance, authority, and freshness. "
-            "score >= 1.5 are considered high quality results."
+            "Scores of 1.5 or higher are considered high-quality results."
         ),
     )
     title: str = Field(description="The title of the webpage.")
     url: str = Field(description="The URL of the webpage.")
-    summary: str = Field(description=("The long summary of the webpage content."))
-    content: str = Field(description="Full page content. Empty when content collection is disabled.")
+    summary: str = Field(description="The summary of the webpage content.")
+    content: str = Field(description="The full page content, or an empty string if showing content is disabled.")
     site_name: str | None = Field(description="The name of the site, or null when unavailable.")
-    date: str | None = Field(description="Pubdate, null when unknown.")
+    date: str | None = Field(description="The publication date, null when unknown.")
     authority: int = Field(
         ge=-1,
         le=4,
         description=(
-            "Authority tier from 0 to 4. -1 means unknown. Values of 3 or above indicate highly authoritative sources."
+            "The source-authority tier, from 0 to 4. A value of -1 indicates that the tier is unknown. "
+            "Values of 3 or higher indicate highly authoritative sources."
         ),
     )
 
@@ -58,8 +59,8 @@ class FetchToolResponse(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    title: str = Field(description="The page title. Empty when the title is unavailable.")
-    content: str = Field(description="The fetched page content as Markdown text.")
+    title: str = Field(description="The page title, or an empty string if unavailable.")
+    content: str = Field(description="The fetched page content in Markdown format.")
 
 
 @lifespan
@@ -74,22 +75,22 @@ mcp = FastMCP(
     name="DeepSeek Search and Fetch",
     version=get_version("deepseek-search-fetch-mcp"),
     instructions=(
-        """This MCP server provides DeepSeek-powered web search and fetch through two MCP tools: `ds_web_search` and `ds_web_fetch`.
+        """This MCP server provides web search and page fetching powered by DeepSeek through two MCP tools: `ds_web_search` and `ds_web_fetch`.
 
 ## ds_web_search
 Use `ds_web_search` to discover current web information and return ranked, structured results.
-It is recommended when you need to find sources for a question, do research, search for documents, compare coverage across the web, or restrict results to specific sites or publication dates.
+Use it to find sources, conduct research, discover documents, compare information across sites, or filter results by site, language or publication date.
 
 ## ds_web_fetch
-Use `ds_web_fetch` to get the agent-friendly Markdown content of a specific webpage. It is recommended when you already have a URL and need to read, summarize, quote, or extract information from that page. Only public HTTP or HTTPS URLs are supported.
-If the URL suffix indicates that the content is agent-friendly, such as formats like JSON, XML, CSV, YAML, YML, MD, TXT, or programming language extensions, you can access the content directly by visiting the URL instead of use ds_web_fetch.
+Use `ds_web_fetch` to fetch the page content as agent-friendly Markdown of a specific webpage. It is recommended when you already have a URL and need to read, summarize, quote, or extract information from that page. Only public HTTP or HTTPS URLs are supported.
+If the URL suffix indicates that the content is agent-friendly, such as formats like JSON, XML, CSV, YAML, YML, MD, TXT, or programming language extensions, you can access the content directly by visiting the URL instead of using ds_web_fetch.
 If the URL suffix indicates that the content is binary, such as an image, audio, video, or binary file, do not use ds_web_fetch to fetch the information.
 
 ## Combined usage
 A common workflow when investigate and survey is to use `ds_web_search` to find relevant pages, then `ds_web_fetch` to inspect a selected result in detail.
 
 ## Recommendation
-If need to perform large number of ds_web_search or combined use, using this MCP in a subagent to avoid consuming too much LLM context.
+For tasks that require many searches, delegate the research to a subagent to avoid consuming too much LLM context.
 """
     ),
     lifespan=app_lifespan,
@@ -139,12 +140,14 @@ async def ds_web_fetch(
 async def ds_web_search(
     query: Annotated[
         str,
-        StringConstraints(strip_whitespace=True, min_length=1, max_length=100),
+        StringConstraints(strip_whitespace=True, min_length=1, max_length=128),
         Field(
             description=(
-                "(Required) Search query, up to 100 Unicode characters. "
-                "To perform an exact match on certain words in this query, wrap it in double quotes. "
-                "This is useful for searching for proper nouns or ensuring that search results must contain specific word."
+                "(Required) Search query. Consisting of keywords, phrases, or a sentence. "
+                "To search for an exact word or phrase, enclose it in double quotation marks "
+                "whih is useful for proper names or phrases that should appear exactly in the results. "
+                "Before sending the API request, this tool combines params `query, lang, sites, after, before` "
+                "into the final search expression, which must not exceed 128 Unicode characters. "
             )
         ),
     ],
@@ -164,8 +167,8 @@ async def ds_web_search(
             ge=1,
             le=50,
             description=(
-                "(Optional) Number of search results to request, from 1 to 50. "
-                "If omitted, the user configured default count is used. "
+                "(Optional) Number of search results to request, from 1 to 50. Usually 10~30 is used. "
+                "If omitted, the server uses the default count configured by the user."
             ),
         ),
     ] = None,
@@ -173,9 +176,11 @@ async def ds_web_search(
         list[str] | None,
         Field(
             description=(
-                "(Optional) Restrict results to the given sites, for example ['github.com', 'huggingface.co']. "
-                "Domains only, do not include schemes, paths or wildcards. "
-                "Not recommended to specify more than 3 sites."
+                "(Optional) Restrict results to specific website domains or subdomains, "
+                'for example ["test.example1.com", "example2.net"]. '
+                "Use bare domain names only, do not include URL schemes, paths, or wildcards. "
+                "Prefer no more than three domains, as each domain adds to the final search expression "
+                "which must not exceed 128 Unicode characters."
             )
         ),
     ] = None,
@@ -183,10 +188,10 @@ async def ds_web_search(
         list[str] | None,
         Field(
             description=(
-                "(Optional) Restrict results to the given language. "
-                "ISO-639-1 format, for example ['en'] or ['zh', 'en'] or ['ru', 'ja']. "
-                "Passing an empty list means no language restriction. "
-                "If omitted, the user configured default language is used."
+                "(Optional) Restrict results to the specified languages using "
+                'ISO 639-1 language codes, for example ["zh", "en"] or ["ja"]. '
+                "Usually omit this parameter unless a specific language restriction is needed."
+                "If omitted, the server uses the default language configured by the user. "
             )
         ),
     ] = None,

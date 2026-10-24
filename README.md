@@ -15,27 +15,16 @@ An MCP server that exposes DeepSeek Search API and Fetch API as two tools for AI
 - **`ds_web_search`**: search the current web through the DeepSeek Search API
 - **`ds_web_fetch`**: fetch public HTTP/HTTPS pages through the DeepSeek Fetch API
 
-## Quick Start
+## MCP Client Configuration
+
+> [!IMPORTANT]
+> Keep the API key in the MCP client's environment configuration. Do not commit a configuration file containing a real key.
 
 ### Prerequisites
 
-- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- Need to install [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Python 3.11 or later
 - A DeepSeek API key
-
-### Run the server
-
-```bash
-DEEPSEEK_API_KEY="sk-**********" uvx deepseek-search-fetch-mcp
-```
-
-The server communicates over stdio. In normal use, your MCP client starts it with the configuration shown below.
-
-## MCP Client Configuration
-
-Require the uvx command in uv.
-
-Add one of the following templates to the `mcpServers` section of your MCP client configuration. Replace the placeholder API key before use.
 
 ### Minimal configuration
 
@@ -57,7 +46,7 @@ This template uses the API key only. The timeout and all Search env fall back to
 
 ### Full configuration
 
-This template includes every supported environment variable. Optional values can be removed or changed for your search policy.
+This template includes every supported environment variable. Optional values can be removed or changed for your search policy. For descriptions of each environment variable, see the **Environment Variables** section.
 
 ```json
 {
@@ -73,28 +62,38 @@ This template includes every supported environment variable. Optional values can
         "DEEPSEEK_SEARCH_NEED_CONTENT": "false",
         "DEEPSEEK_SEARCH_LANG": "zh,en",
         "DEEPSEEK_SEARCH_EXCLUDE_WORDS": "word1|word2",
-        "DEEPSEEK_SEARCH_EXCLUDE_SITES": "csdn.net|baijiahao.baidu.com"
+        "DEEPSEEK_SEARCH_EXCLUDE_SITES": "csdn.net|baidu.com"
       }
     }
   }
 }
 ```
 
-> [!IMPORTANT]
-> Keep the API key in the MCP client's environment configuration. Do not commit a configuration file containing a real key.
+### DeepSeek Harness (DSH)
+
+There is no need to use this MCP; DSH provides the built-in [@deepseek-ai/dsh-web-search-deepseek](https://github.com/deepseek-ai/deepseek-harness/tree/master/packages/web/web-search-deepseek) plugin.
+
+### ChatGPT Desktop (Codex)
+
+![](images/codex01.png)
+![](images/codex02.png)
+
+### Zcode
+
+![](images/zcode01.png)
 
 ## Environment Variables
 
-| Variable                        | Required | Default | Description                                                                                                                              |
-| ------------------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `DEEPSEEK_API_KEY`              | Yes      | -       | DeepSeek API key. It must match `^sk-[a-zA-Z0-9]+$`                                                                                      |
-| `DEEPSEEK_API_TIMEOUT`          | No       | `30`    | Request timeout in seconds. Must be greater than 0. Requests are not retried                                                             |
-| `DEEPSEEK_SEARCH_COUNT`         | No       | `10`    | Default result count for `ds_web_search`, from 1 to 50. The tool parameter takes precedence                                              |
-| `DEEPSEEK_SEARCH_LOCALIZATION`  | No       | -       | Globally routable unicast IPv4 address passed to the Search API for result localization. Usually unnecessary                            |
-| `DEEPSEEK_SEARCH_NEED_CONTENT`  | No       | -       | Whether the Search API should include page content in results. Accepts `true`, `1`, `false`, or `0`, case-insensitively. Not recommended because it can consume substantial context |
-| `DEEPSEEK_SEARCH_LANG`          | No       | -       | Default language restriction as comma-separated ISO 639-1 codes, such as `zh,en`. The `lang` tool parameter takes precedence             |
+| Variable                        | Required | Default | Description                                                                                                                                                                                                                              |
+| ------------------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DEEPSEEK_API_KEY`              | Yes      | -       | DeepSeek API key. It must match `^sk-[a-zA-Z0-9]+$`                                                                                                                                                                                      |
+| `DEEPSEEK_API_TIMEOUT`          | No       | `30`    | Request timeout in seconds. Must be greater than 0. Requests are not retried                                                                                                                                                             |
+| `DEEPSEEK_SEARCH_COUNT`         | No       | `10`    | Default result count for `ds_web_search`, from 1 to 50. The tool parameter takes precedence                                                                                                                                              |
+| `DEEPSEEK_SEARCH_LOCALIZATION`  | No       | -       | Globally routable unicast IPv4 address passed to the Search API for result localization. Usually unnecessary                                                                                                                             |
+| `DEEPSEEK_SEARCH_NEED_CONTENT`  | No       | -       | Whether the Search API should include page content in results. Accepts `true`, `1`, `false`, or `0`, case-insensitively. Not recommended because it can consume substantial context                                                      |
+| `DEEPSEEK_SEARCH_LANG`          | No       | -       | Default language restriction as comma-separated ISO 639-1 codes, such as `zh,en`. The `lang` tool parameter takes precedence                                                                                                             |
 | `DEEPSEEK_SEARCH_EXCLUDE_WORDS` | No       | -       | Global word blacklist separated by `\|`. Each word is added as an excluded phrase and cannot contain double quotes or control characters. Not commonly used; use no more than 3 words because they consume the 128-character query limit |
-| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | No       | -       | Global domain blacklist separated by `\|`. Each entry must be a valid bare domain and is added as an excluded site. Use no more than 3 sites because they consume the 128-character query limit |
+| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | No       | -       | Global domain blacklist separated by `\|`. Each entry must be a valid bare domain and is added as an excluded site. Use no more than 3 sites because they consume the 128-character query limit                                          |
 
 Empty optional variables are ignored. A non-empty value is validated when the server starts, and invalid configuration causes the server to exit instead of accepting requests.
 
@@ -207,7 +206,7 @@ src/deepseek_search_fetch_mcp/
 scripts/           # Testing scripts
 ```
 
-## Tech Stack
+### Tech Stack
 
 - [FastMCP](https://gofastmcp.com/) for the MCP server and tool schemas
 - [aiohttp](https://docs.aiohttp.org/) for asynchronous DeepSeek API requests
@@ -215,7 +214,7 @@ scripts/           # Testing scripts
 - [validators](https://github.com/python-validators/validators) for URL and domain checks
 - [iso639-lang](https://pypi.org/project/iso639-lang/) for ISO 639-1 language validation
 
-## Documentation
+### Documentation
 
 - [Design](docs/design/)
 - [Testing](/scripts/README.md)

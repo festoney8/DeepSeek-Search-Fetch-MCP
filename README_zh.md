@@ -15,28 +15,16 @@
 - **`ds_web_search`**：通过 DeepSeek Search API 检索最新网络信息
 - **`ds_web_fetch`**：通过 DeepSeek Fetch API 获取公开 HTTP/HTTPS 页面
 
-## 快速开始
+## 如何使用
+
+> [!IMPORTANT]
+> API Key 仅应保存在 MCP 客户端的环境配置中，请勿提交包含真实密钥的配置文件。
 
 ### 环境要求
 
-- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- 需安装 [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Python 3.11 或更高版本
 - DeepSeek API Key
-- 兼容 MCP 的客户端
-
-### 运行服务
-
-```bash
-DEEPSEEK_API_KEY="sk-**********" uvx deepseek-search-fetch-mcp
-```
-
-服务通过 stdio 通信。正常使用时，应由 MCP 客户端通过下方配置启动服务。
-
-## MCP 客户端配置
-
-需要使用 uv 的 uvx 命令。
-
-将以下任一模板加入 MCP 客户端配置的 `mcpServers` 字段，并在使用前替换占位 API Key。
 
 ### 最小配置
 
@@ -58,7 +46,7 @@ DEEPSEEK_API_KEY="sk-**********" uvx deepseek-search-fetch-mcp
 
 ### 完整配置
 
-此模板包含全部支持的环境变量，可按实际搜索策略删除或修改可选值。
+此模板包含全部支持的环境变量，可按实际搜索策略删除或修改可选值。各环境变量说明参考**环境变量**章节。
 
 ```json
 {
@@ -74,28 +62,38 @@ DEEPSEEK_API_KEY="sk-**********" uvx deepseek-search-fetch-mcp
         "DEEPSEEK_SEARCH_NEED_CONTENT": "false",
         "DEEPSEEK_SEARCH_LANG": "zh,en",
         "DEEPSEEK_SEARCH_EXCLUDE_WORDS": "word1|word2",
-        "DEEPSEEK_SEARCH_EXCLUDE_SITES": "csdn.net|baijiahao.baidu.com"
+        "DEEPSEEK_SEARCH_EXCLUDE_SITES": "csdn.net|baidu.com"
       }
     }
   }
 }
 ```
 
-> [!IMPORTANT]
-> API Key 仅应保存在 MCP 客户端的环境配置中，请勿提交包含真实密钥的配置文件。
+### DeepSeek Harness (DSH)
+
+无需使用本 mcp，DSH 已经内置了 [@deepseek-ai/dsh-web-search-deepseek](https://github.com/deepseek-ai/deepseek-harness/tree/master/packages/web/web-search-deepseek) 插件
+
+### ChatGPT Desktop (Codex)
+
+![](images/codex01.png)
+![](images/codex02.png)
+
+### Zcode
+
+![](images/zcode01.png)
 
 ## 环境变量
 
-| 环境变量                        | 必填 | 默认值 | 说明                                                                                  |
-| ------------------------------- | ---- | ------ | ------------------------------------------------------------------------------------- |
-| `DEEPSEEK_API_KEY`              | 是   | -      | DeepSeek API Key，必须匹配 `^sk-[a-zA-Z0-9]+$`                                        |
-| `DEEPSEEK_API_TIMEOUT`          | 否   | `30`   | 请求超时秒数，必须大于 0，不会自动重试                                                |
-| `DEEPSEEK_SEARCH_COUNT`         | 否   | `10`   | `ds_web_search` 默认结果数量，范围 1 到 50。工具参数优先                              |
-| `DEEPSEEK_SEARCH_LOCALIZATION`  | 否   | -      | 传递给 Search API 的公网单播 IPv4 地址，用于结果本地化。通常不需要设置                |
-| `DEEPSEEK_SEARCH_NEED_CONTENT`  | 否   | -      | Search API 是否在搜索结果中包含页面内容。支持 `true`、`1`、`false`、`0`，不区分大小写。不推荐开启，会占用大量上下文 |
-| `DEEPSEEK_SEARCH_LANG`          | 否   | -      | 默认语言限制，使用逗号分隔的 ISO 639-1 语言码，例如 `zh,en`。`lang` 工具参数优先      |
+| 环境变量                        | 必填 | 默认值 | 说明                                                                                                                                                  |
+| ------------------------------- | ---- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DEEPSEEK_API_KEY`              | 是   | -      | DeepSeek API Key，必须匹配 `^sk-[a-zA-Z0-9]+$`                                                                                                        |
+| `DEEPSEEK_API_TIMEOUT`          | 否   | `30`   | 请求超时秒数，必须大于 0，不会自动重试                                                                                                                |
+| `DEEPSEEK_SEARCH_COUNT`         | 否   | `10`   | `ds_web_search` 默认结果数量，范围 1 到 50。工具参数优先                                                                                              |
+| `DEEPSEEK_SEARCH_LOCALIZATION`  | 否   | -      | 传递给 Search API 的公网单播 IPv4 地址，用于结果本地化。通常不需要设置                                                                                |
+| `DEEPSEEK_SEARCH_NEED_CONTENT`  | 否   | -      | Search API 是否在搜索结果中包含页面内容。支持 `true`、`1`、`false`、`0`，不区分大小写。不推荐开启，会占用大量上下文                                   |
+| `DEEPSEEK_SEARCH_LANG`          | 否   | -      | 默认语言限制，使用逗号分隔的 ISO 639-1 语言码，例如 `zh,en`。`lang` 工具参数优先                                                                      |
 | `DEEPSEEK_SEARCH_EXCLUDE_WORDS` | 否   | -      | 全局排除词，使用 `\|` 分隔。每个词会作为排除短语加入搜索，且不得包含双引号或控制字符。不常用，建议不超过 3 个；排除词会占用 query 的 128 字符长度限制 |
-| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | 否   | -      | 全局排除站点，使用 `\|` 分隔。每项必须是合法裸域名，并会作为排除站点加入搜索。建议不超过 3 个；排除站点会占用 query 的 128 字符长度限制 |
+| `DEEPSEEK_SEARCH_EXCLUDE_SITES` | 否   | -      | 全局排除站点，使用 `\|` 分隔。每项必须是合法裸域名，并会作为排除站点加入搜索。建议不超过 3 个；排除站点会占用 query 的 128 字符长度限制               |
 
 可选环境变量为空时会被忽略。非空值会在服务启动时校验，配置非法时服务直接退出，不接收请求。
 
@@ -208,7 +206,7 @@ src/deepseek_search_fetch_mcp/
 scripts/           # 测试脚本
 ```
 
-## 技术栈
+### 技术栈
 
 - [FastMCP](https://gofastmcp.com/)：实现 MCP 服务和工具 Schema
 - [aiohttp](https://docs.aiohttp.org/)：异步请求 DeepSeek API
@@ -216,7 +214,7 @@ scripts/           # 测试脚本
 - [validators](https://github.com/python-validators/validators)：校验 URL 和域名
 - [iso639-lang](https://pypi.org/project/iso639-lang/)：校验 ISO 639-1 语言码
 
-## 文档
+### 文档
 
 - [设计文档](docs/design/)
 - [测试方法](/scripts/README.md)
