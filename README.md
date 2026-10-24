@@ -90,6 +90,21 @@ to the `refs` field in the `$DSH_HOME/.credentials.yaml` file and then restart D
 
 ![](images/zcode01.png)
 
+### FAQ
+
+#### Why can't a non-login shell find `uvx` in WSL or over SSH?
+
+Use Zsh and add the following to `~/.zshenv` so that `~/.local/bin` is available in non-login and non-interactive shells. This method can also resolve issues where tools like fnm, npm, or pnpm are installed but cannot be found.
+
+```zsh
+typeset -U path
+path=(
+  "$HOME/.local/bin"
+  $path
+)
+export PATH
+```
+
 ## Environment Variables
 
 | Variable                        | Required | Default | Description                                                                                                                                                                                                                              |

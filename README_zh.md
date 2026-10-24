@@ -90,6 +90,21 @@ DEEPSEEK_API_KEY=sk-********************
 
 ![](images/zcode01.png)
 
+### 常见问题
+
+#### 在 WSL 或 SSH 环境中已安装 uv，但非登录 shell 找不到 uvx 怎么办？
+
+使用 Zsh，并在 `~/.zshenv` 中加入以下配置，使非登录和非交互 shell 也能找到 `~/.local/bin` 。这一方法也能解决已安装但找不到 fnm、npm、pnpm 等工具的问题
+
+```zsh
+typeset -U path
+path=(
+  "$HOME/.local/bin"
+  $path
+)
+export PATH
+```
+
 ## 环境变量
 
 | 环境变量                        | 必填 | 默认值 | 说明                                                                                                                                                  |
