@@ -156,7 +156,7 @@ URL 必须包含主机名，不得包含用户名、密码或空白字符，并�
 }
 ```
 
-`ds_web_search` 返回 `results` 数组，包含 `title`、`url`、`snippet`、`summary`、`content`、`site_name`、`site_icon`、`date`、`authority`、`rerank_score` 等字段。`ds_web_fetch` 返回页面 `title` 和 `content`。
+`ds_web_search` 返回 `results` 数组，包含 `title`、`url`、`summary`、`content`、`site_name`、`date`、`authority`、`rerank_score` 等字段。`ds_web_fetch` 返回页面 `title` 和 `content`。
 
 ## 行为与校验
 

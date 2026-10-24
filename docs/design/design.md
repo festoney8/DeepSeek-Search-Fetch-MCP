@@ -90,7 +90,7 @@
 
 ### 输出
 
-- 成功时原样 deepseek api 返回
+- 成功时返回 DeepSeek API 原始结构，但不包含 `snippet` 和 `site_icon`
 
 ## 合法性检测
 

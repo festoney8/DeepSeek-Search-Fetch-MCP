@@ -155,7 +155,7 @@ It can then call `ds_web_fetch` with a selected result:
 }
 ```
 
-`ds_web_search` returns a `results` array containing fields such as `title`, `url`, `snippet`, `summary`, `content`, `site_name`, `site_icon`, `date`, `authority`, and `rerank_score`. `ds_web_fetch` returns the page `title` and `content`.
+`ds_web_search` returns a `results` array containing fields such as `title`, `url`, `summary`, `content`, `site_name`, `date`, `authority`, and `rerank_score`. `ds_web_fetch` returns the page `title` and `content`.
 
 ## Behavior and Validation
 

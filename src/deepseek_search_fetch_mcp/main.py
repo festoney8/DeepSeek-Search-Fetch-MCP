@@ -7,11 +7,34 @@ from fastmcp import Context, FastMCP
 from fastmcp.dependencies import CurrentContext
 from fastmcp.exceptions import ToolError
 from fastmcp.server.lifespan import lifespan
-from pydantic import Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
-from deepseek_search_fetch_mcp.api import DeepSeekAPI, DeepSeekAPIError, FetchResponse, SearchResponse
+from deepseek_search_fetch_mcp.api import DeepSeekAPI, DeepSeekAPIError, FetchResponse
 from deepseek_search_fetch_mcp.env import EnvConfig, load_env
 from deepseek_search_fetch_mcp.request import build_fetch_request, build_search_request
+
+
+class SearchToolResult(BaseModel):
+    """MCP 搜索单条结果"""
+
+    model_config = ConfigDict(extra="allow")
+
+    rerank_score: float = Field(ge=0, le=3)
+    title: str
+    url: str
+    summary: str
+    content: str
+    site_name: str | None
+    date: str | None
+    authority: int = Field(ge=-1, le=4)
+
+
+class SearchToolResponse(BaseModel):
+    """MCP 搜索成功响应"""
+
+    model_config = ConfigDict(extra="allow")
+
+    results: list[SearchToolResult]
 
 
 @lifespan
@@ -149,7 +172,7 @@ async def ds_web_search(
         Field(description=("(Optional) YYYY-MM-DD date to restrict results published before this date.")),
     ] = None,
     ctx: Context = CurrentContext(),  # noqa: B008
-) -> SearchResponse:
+) -> SearchToolResponse:
     """Search the web through the DeepSeek Search API."""
     env: EnvConfig = ctx.lifespan_context["env"]
     api: DeepSeekAPI = ctx.lifespan_context["api"]
@@ -168,7 +191,7 @@ async def ds_web_search(
         raise ToolError(str(exc)) from exc
 
     try:
-        return await api.search(request)
+        response = await api.search(request)
     except DeepSeekAPIError as exc:
         details = ", ".join(
             f"{name}={value}"
@@ -176,6 +199,10 @@ async def ds_web_search(
             if value is not None
         )
         raise ToolError(f"{exc} [{details}]" if details else str(exc)) from exc
+
+    return SearchToolResponse.model_validate(
+        response.model_dump(exclude={"results": {"__all__": {"snippet", "site_icon"}}})
+    )
 
 
 def main() -> None:
